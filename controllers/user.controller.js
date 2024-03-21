@@ -105,3 +105,59 @@ exports.deleteuser = (request, response) => {
       });
     });
 };
+
+exports.resetPassword = (request, response) => {
+  const { oldpass, newpass } = request.body;
+  let userID = request.params.id;
+
+  if (!oldpass || !newpass) {
+      return response.json({
+        success: false,
+        message: 'Please provide both old password and new password.'
+      });
+    }
+
+  userModel.findOne({ where: { userID: userID } })
+      .then(user => {
+          if (!user) {
+              return response.json({
+                  success: false,
+                  message: "User not found"
+              });
+          }
+
+          // Check if the provided old password matches the one in the database
+          if (user.password !== md5(oldpass)) {
+              return response.json({
+                  success: false,
+                  message: "Old password does not match"
+              });
+          }
+
+          // Update the password
+          let dataUser = {
+              password: md5(newpass)
+          };
+          
+          userModel.update(dataUser, { where: { userID: userID } })
+              .then(result => {
+                  return response.json({
+                      success: true,
+                      data: dataUser,
+                      message: "Password has been updated"
+                  });
+              })
+              .catch(error => {
+                  return response.json({
+                      success: false,
+                      message: error.message
+                  });
+              });
+      })
+      .catch(error => {
+          return response.json({
+              success: false,
+              message: error.message
+          });
+      });
+}

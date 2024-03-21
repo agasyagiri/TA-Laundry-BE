@@ -14,9 +14,10 @@ app.use(cookieParser());
 const userRoute = require(`./routes/user.route`);
 app.use(`/user`, userRoute);
 
-app.use(auth("owner", "admin"));
+
+app.use(auth("owner", "kasir"))
 const jenisRoute = require(`./routes/jenis_laundry.route`);
-app.use(`/jenis`, jenisRoute);
+app.use(`/jenis`,  jenisRoute);
 
 const pesananRoute = require(`./routes/pesanan.route`);
 app.use(`/pesanan`, pesananRoute);

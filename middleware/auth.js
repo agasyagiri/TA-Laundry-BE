@@ -3,9 +3,9 @@ const jwt = require("jsonwebtoken");
 const auth =
   (...akses) =>
   (req, res, next) => {
-    try {
+    try { 
       const token =
-        res?.cookies?.token || req.headers?.authorization?.split("Bearer ")[1];
+        req?.cookies?.token || req.headers?.authorization?.split("Bearer ")[1];
       if (!token)
         return res.status(401).json({ status: 401, message: "Unauthorized" });
       const JWT_SECRET = process.env.JWT_SECRET;
