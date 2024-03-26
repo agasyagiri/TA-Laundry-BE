@@ -23,6 +23,7 @@ module.exports = (sequelize, DataTypes) => {
     jenisCuci: DataTypes.ENUM('cuci satuan','cuci kering','cuci komplit'),
     namaCuci: DataTypes.STRING,
     harga: DataTypes.INTEGER,
+    image: DataTypes.STRING
 
   }, 
   {
