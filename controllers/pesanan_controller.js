@@ -1,5 +1,5 @@
 const pesananModel = require(`../models/index`).pesanan
-const md5 = require(`md5`)
+const detailPesananModel = require('../models').DetailPesanan;
 const Op = require(`sequelize`).Op
 const db = require("../db");
 
@@ -36,7 +36,68 @@ exports.findPesanan = async (request, response) => {
     })
 }
 
-// penambahan data
+exports.addPesanan = (request, response) => {
+    let date = new Date();
+    let y = date.getFullYear();
+    let m = ("0" + (date.getMonth() + 1)).slice(-2);
+    let d = ("0" + date.getDate()).slice(-2);
+    let h = ("0" + date.getHours()).slice(-2);
+    let s = ("0" + date.getSeconds()).slice(-2);
+    let i = ("0" + date.getMinutes()).slice(-2);
+    let kodeInvoice = `TA${y}${m}${d}${s}${i}`;
+    let tgl = `${y}-${m}-${d} ${h}:${i}:${s}`;
+
+    const end_date = new Date();
+    end_date.setDate(end_date.getDate() + 7);
+    let y2 = end_date.getFullYear();
+    let m2 = ("0" + (end_date.getMonth() + 1)).slice(-2);
+    let d2 = ("0" + end_date.getDate()).slice(-2);
+    let batasWaktu = `${y2}-${m2}-${d2} ${h}:${i}:${s}`;
+
+    const data = {
+        userID: request.body.userID,
+        namaCust: request.body.namaCust,
+        alamat: request.body.alamat,
+        noTelp: request.body.noTelp,
+        tgl: tgl,
+        kodeInvoice: kodeInvoice,
+        batasWaktu: batasWaktu,
+        status: "baru",
+        statusBayar: "belum"
+    };
+
+    // Tambahkan pesanan
+    Pesanan.create(data)
+        .then(result => {
+            // Dapatkan harga jenis laundry
+            return JenisLaundry.findByPk(request.body.jenisID);
+        })
+        .then(jenisLaundry => {
+            const harga = jenisLaundry.harga;
+            // Hitung total harga
+            const totalHarga = harga * request.body.qty;
+            // Tambahkan detail pesanan
+            return DetailPesanan.create({
+                pesananID: pesanan.pesananID,
+                jenisID: request.body.jenisID,
+                qty: request.body.qty,
+                totalHarga: totalHarga
+            });
+        })
+        .then(() => {
+            response.json({
+                message: "Data transaction inserted successfully."
+            });
+        })
+        .catch(error => {
+            console.error(error);
+            response.status(500).json({
+                error: "Internal server error"
+            });
+        });
+};
+
+/* 
 exports.addPesanan = (request, response) => {
     let date = new Date();
     let y = date.getFullYear();
@@ -106,6 +167,7 @@ exports.addPesanan = (request, response) => {
         }
     })
 }
+*/
 
 exports.updateStatus = (request, response) => {
     let pesananID = request.body.pesananID;
@@ -123,9 +185,47 @@ exports.updateStatus = (request, response) => {
             })
         }
     })
-    
 }
 
+exports.updatePayment = async (request, response) => {
+    try {
+        const date = new Date();
+        const y = date.getFullYear();
+        const m = ("0" + (date.getMonth() + 1)).slice(-2);
+        const d = ("0" + date.getDate()).slice(-2);
+        const h = ("0" + date.getHours()).slice(-2);
+        const s = ("0" + date.getSeconds()).slice(-2);
+        const i = ("0" + date.getMinutes()).slice(-2);
+        const tglPembayaran = `${y}-${m}-${d} ${h}:${i}:${s}`;
+        const pesananID = request.body.pesananID;
+
+        // Update data pesanan
+        await pesananModel.update({
+            statusBayar: "dibayar",
+            tglPembayaran: tglPembayaran
+        }, {
+            where: { pesananID: pesananID }
+        });
+
+        // Update data detail pesanan
+        await detailPesananModel.update({
+            totalBayar: request.body.totalBayar
+        }, {
+            where: { pesananID: pesananID }
+        });
+
+        response.json({
+            message: `Successfully update transaction where id = ${pesananID}.`
+        });
+    } catch (error) {
+        console.error(error);
+        response.status(500).json({
+            error: "Internal server error"
+        });
+    }
+};
+
+/*
 exports.updatePayment = (request, response) => {
     let date = new Date()
     let y = date.getFullYear();
@@ -150,9 +250,9 @@ exports.updatePayment = (request, response) => {
             }
             let sql = "update detail_pesanans set ? where pesananID = ?";
             db.query(sql, [data, pesananID], (error, result) => {
-                if (error){
+                if (error) {
                     throw error;
-                }else{
+                } else {
                     response.json({
                         message: `Successfully update transaction where id = ${pesananID}.`
                     })
@@ -161,6 +261,7 @@ exports.updatePayment = (request, response) => {
         }
     })
 }
+*/
 
 // update data
 exports.updatePesanan = (request, response) => {

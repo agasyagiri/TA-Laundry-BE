@@ -3,7 +3,7 @@ const app = express()
 
 app.use(express.json())
 
-const pesananController = require(`../controllers/pesanan.controller`)
+const pesananController = require(`../controllers/pesanan_controller`)
 app.get("/", pesananController.getAllPesanan)
 app.get("/:key", pesananController.findPesanan)
 app.post("/", pesananController.addPesanan)
