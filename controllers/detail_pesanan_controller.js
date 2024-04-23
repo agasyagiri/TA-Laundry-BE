@@ -1,9 +1,9 @@
-const detailModel = require(`../models/index`).detail
+const detailPesananModel = require(`../models/index`).detail
 const Op = require(`sequelize`).Op
 
 // mendapatkan semua data
 exports.getAllDetail = async (request, response) => {
-    let details = await detailModel.findAll()
+    let details = await detailPesananModel.findAll()
     return response.json({
         success: true,
         data: details,
@@ -14,7 +14,7 @@ exports.getAllDetail = async (request, response) => {
 // cari data
 exports.findDetail = async (request, response) => {
     let keyword = request.params.key
-    let details = await detailModel.findAll({
+    let details = await detailPesananModel.findAll({
         where: {
             [Op.or]: [
                 { detailID: { [Op.substring]: keyword } },
@@ -35,7 +35,7 @@ exports.addDetail = (request, response) => {
         pesananID: request.body.pesananID
     }
 
-    detailModel.create(newDetail)
+    detailPesananModel.create(newDetail)
         .then(result => {
             return response.json({
                 success: true,
@@ -71,7 +71,6 @@ exports.updateDetail = (request, response) => {
             })
         })
 }
-
 
 // penghapusan data
 exports.deleteDetail = (request, response) => {
