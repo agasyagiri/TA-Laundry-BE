@@ -12,18 +12,15 @@ app.use(cors());
 app.use(cookieParser());
 app.use(express.static(__dirname))
 
-const userRoute = require(`./routes/user.route`);
+const userRoute = require(`./routes/user_route`);
+const jenisRoute = require(`./routes/jenis_laundry_route`);
+const pesananRoute = require(`./routes/pesanan_route`);
+const detailRoute = require(`./routes/detail_pesanan_route`);
+
 app.use(`/user`, userRoute);
-
-
 app.use(auth("owner", "kasir"))
-const jenisRoute = require(`./routes/jenis_laundry.route`);
-app.use(`/jenis`,  jenisRoute);
-
-const pesananRoute = require(`./routes/pesanan.route`);
+app.use(`/jenis`, jenisRoute);
 app.use(`/pesanan`, pesananRoute);
-
-const detailRoute = require(`./routes/detail_pesanan.route`);
 app.use(`/detail`, detailRoute);
 
 app.listen(3000, () => {

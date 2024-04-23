@@ -1,8 +1,6 @@
 const jenisModel = require(`../models/index`).jenis_laundry
-const md5 = require(`md5`)
 const Op = require(`sequelize`).Op
-const express = require('express');  
-const upload = require(`./upload-image`).single(`image`)
+const upload = require(`./upload_image`).single(`image`)
 const path = require(`path`)
 const fs = require(`fs`)
 

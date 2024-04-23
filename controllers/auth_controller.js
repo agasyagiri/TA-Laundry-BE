@@ -1,4 +1,3 @@
-const express = require(`express`);
 const md5 = require(`md5`);
 const jwt = require(`jsonwebtoken`);
 const userModel = require(`../models/index`).user;

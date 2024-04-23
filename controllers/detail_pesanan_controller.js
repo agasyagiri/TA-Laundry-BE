@@ -1,5 +1,4 @@
 const detailModel = require(`../models/index`).detail
-const md5 = require(`md5`)
 const Op = require(`sequelize`).Op
 
 // mendapatkan semua data

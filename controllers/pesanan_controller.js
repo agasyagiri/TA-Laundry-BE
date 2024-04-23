@@ -1,5 +1,4 @@
 const pesananModel = require(`../models/index`).pesanan
-const md5 = require(`md5`)
 const Op = require(`sequelize`).Op
 const db = require("../db");
 

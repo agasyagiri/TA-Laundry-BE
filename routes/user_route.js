@@ -3,8 +3,8 @@ const app = express();
 
 app.use(express.json());
 
-const userController = require(`../controllers/user.controller`);
-const { login } = require("../controllers/auth.controller");
+const userController = require(`../controllers/user_controller`);
+const { login } = require("../controllers/auth_controller");
 const { auth } = require("../middleware/auth");
 
 app.post("/login", login);
