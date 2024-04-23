@@ -9,11 +9,11 @@ const { auth } = require("../middleware/auth");
 
 app.post("/login", login);
 
-app.use(auth("owner"));
-app.get("/",  userController.getAllUser);
+// app.use(auth("owner"));
+app.get("/", userController.getAllUser);
 app.get("/:key", userController.finduser);
-app.post("/",  userController.adduser);
-app.put("/:id",  userController.updateuser);
-app.delete("/:id",  userController.deleteuser);
-app.put("/reset/:id",userController.resetPassword)
+app.post("/", userController.adduser);
+app.put("/:id", userController.updateuser);
+app.delete("/:id", userController.deleteuser);
+app.put("/reset/:id", userController.resetPassword)
 module.exports = app;
