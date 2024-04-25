@@ -31,10 +31,10 @@ module.exports = {
         type: Sequelize.DATE
       },
       status: {
-        type: Sequelize.ENUM('baru','proses','selesai','ambil')
+        type: Sequelize.ENUM('baru', 'proses', 'selesai', 'ambil')
       },
       statusBayar: {
-        type: Sequelize.ENUM('dibayar','belum')
+        type: Sequelize.ENUM('dibayar', 'belum')
       },
       userID: {
         type: Sequelize.INTEGER,
@@ -43,6 +43,14 @@ module.exports = {
           model: "users",
           key: "userID"
         }
+      },
+      createdAt: {
+        allowNull: false,
+        type: Sequelize.DATE
+      },
+      updatedAt: {
+        allowNull: false,
+        type: Sequelize.DATE
       }
     });
   },

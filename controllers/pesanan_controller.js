@@ -1,5 +1,6 @@
 const pesananModel = require(`../models/index`).pesanan
-const detailPesananModel = require('../models').DetailPesanan;
+const detailPesananModel = require('../models').detail_pesanan;
+const jenisLaundryModel = require('../models').jenis_laundry;
 const Op = require(`sequelize`).Op
 const db = require("../db");
 
@@ -36,66 +37,67 @@ exports.findPesanan = async (request, response) => {
     })
 }
 
-exports.addPesanan = (request, response) => {
-    let date = new Date();
-    let y = date.getFullYear();
-    let m = ("0" + (date.getMonth() + 1)).slice(-2);
-    let d = ("0" + date.getDate()).slice(-2);
-    let h = ("0" + date.getHours()).slice(-2);
-    let s = ("0" + date.getSeconds()).slice(-2);
-    let i = ("0" + date.getMinutes()).slice(-2);
-    let kodeInvoice = `TA${y}${m}${d}${s}${i}`;
-    let tgl = `${y}-${m}-${d} ${h}:${i}:${s}`;
+exports.addPesanan = async (request, response) => {
+    try {
+        const date = new Date();
+        const y = date.getFullYear();
+        const m = ("0" + (date.getMonth() + 1)).slice(-2);
+        const d = ("0" + date.getDate()).slice(-2);
+        const h = ("0" + date.getHours()).slice(-2);
+        const s = ("0" + date.getSeconds()).slice(-2);
+        const i = ("0" + date.getMinutes()).slice(-2);
+        const kodeInvoice = `TA${y}${m}${d}${s}${i}`;
+        const tgl = `${y}-${m}-${d} ${h}:${i}:${s}`;
 
-    const end_date = new Date();
-    end_date.setDate(end_date.getDate() + 7);
-    let y2 = end_date.getFullYear();
-    let m2 = ("0" + (end_date.getMonth() + 1)).slice(-2);
-    let d2 = ("0" + end_date.getDate()).slice(-2);
-    let batasWaktu = `${y2}-${m2}-${d2} ${h}:${i}:${s}`;
+        const end_date = new Date();
+        end_date.setDate(end_date.getDate() + 7);
+        const y2 = end_date.getFullYear();
+        const m2 = ("0" + (end_date.getMonth() + 1)).slice(-2);
+        const d2 = ("0" + end_date.getDate()).slice(-2);
+        const batasWaktu = `${y2}-${m2}-${d2} ${h}:${i}:${s}`;
 
-    const data = {
-        userID: request.body.userID,
-        namaCust: request.body.namaCust,
-        alamat: request.body.alamat,
-        noTelp: request.body.noTelp,
-        tgl: tgl,
-        kodeInvoice: kodeInvoice,
-        batasWaktu: batasWaktu,
-        status: "baru",
-        statusBayar: "belum"
-    };
+        const data = {
+            userID: request.body.userID,
+            namaCust: request.body.namaCust,
+            alamat: request.body.alamat,
+            noTelp: request.body.noTelp,
+            tgl: tgl,
+            kodeInvoice: kodeInvoice,
+            batasWaktu: batasWaktu,
+            status: "baru",
+            statusBayar: "belum"
+        };
 
-    // Tambahkan pesanan
-    Pesanan.create(data)
-        .then(result => {
-            // Dapatkan harga jenis laundry
-            return JenisLaundry.findByPk(request.body.jenisID);
-        })
-        .then(jenisLaundry => {
-            const harga = jenisLaundry.harga;
-            // Hitung total harga
-            const totalHarga = harga * request.body.qty;
-            // Tambahkan detail pesanan
-            return DetailPesanan.create({
-                pesananID: pesanan.pesananID,
-                jenisID: request.body.jenisID,
-                qty: request.body.qty,
-                totalHarga: totalHarga
-            });
-        })
-        .then(() => {
-            response.json({
-                message: "Data transaction inserted successfully."
-            });
-        })
-        .catch(error => {
-            console.error(error);
-            response.status(500).json({
-                error: "Internal server error"
-            });
+        // Tambahkan pesanan
+        const result = await pesananModel.create(data);
+
+        // Dapatkan harga jenis laundry
+        const jenisLaundry = await jenisLaundryModel.findByPk(request.body.jenisID);
+        const harga = jenisLaundry.harga;
+
+        // Hitung total harga
+        const totalHarga = harga * request.body.qty;
+
+        // Tambahkan detail pesanan
+        await detailPesananModel.create({
+            pesananID: result.pesananID,
+            jenisID: request.body.jenisID,
+            qty: request.body.qty,
+            totalHarga: totalHarga
         });
+
+        response.json({
+            message: "Data transaction inserted successfully."
+        });
+    } catch (error) {
+        console.error(error);
+        response.status(500).json({
+            error: "Internal server error"
+        });
+    }
 };
+
+
 
 /* 
 exports.addPesanan = (request, response) => {

@@ -17,8 +17,8 @@ const jenisRoute = require(`./routes/jenis_laundry_route`);
 const pesananRoute = require(`./routes/pesanan_route`);
 const detailRoute = require(`./routes/detail_pesanan_route`);
 
+// app.use(auth("owner", "kasir"))
 app.use(`/user`, userRoute);
-app.use(auth("owner", "kasir"))
 app.use(`/jenis`, jenisRoute);
 app.use(`/pesanan`, pesananRoute);
 app.use(`/detail`, detailRoute);
